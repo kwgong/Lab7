@@ -5,7 +5,7 @@ export const router = {};
 /**
  * Changes the "page" (state) that your SPA app is currently set to
  */
-router.setState = function() {
+router.setState = function(ver, entryNum, fromPop, state) { //ver: 1=entry, 2=home, 3=setting
   /**
    * - There are three states that your SPA app will have
    *    1. The home page
@@ -35,4 +35,63 @@ router.setState = function() {
    *    1. You may add as many helper functions in this file as you like
    *    2. You may modify the parameters of setState() as much as you like
    */
+
+  let body = document.querySelector('body');
+  let h = document.querySelector('h1');
+  let singleEntry = document.querySelector('entry-page');
+
+  if(ver == 1){
+    body.className = 'single-entry';
+    h.innerHTML = "Entry" + " " + entryNum;
+    let url = "#entry" + entryNum;
+    history.pushState({page: "single-entry", number: entryNum}, h.innerHTML, url);
+  }
+  else if(ver == 2){
+    if(singleEntry != null){
+      singleEntry.remove();
+      let newEntry = document.createElement('entry-page');
+      body.appendChild(newEntry);
+    }
+    body.className = 'body';
+    h.innerHTML = "Journal Entries"
+    history.pushState({page: "home"}, h.innerHTML, "#home");
+  }
+  else if(ver == 3){
+    if(singleEntry != null){
+      singleEntry.remove();
+      let newEntry = document.createElement('entry-page');
+      body.appendChild(newEntry);
+    }
+    body.className = 'settings';
+    body.classList.add('settings');
+    h.innerHTML = "Settings";
+    history.pushState({page: "settings"}, h.innerHTML, "#settings");
+  }
+  else if(fromPop){
+    if(state == null || state.page == 'home'){
+      body.className = 'body';
+      h.innerHTML = "Journal Entries";
+    }
+    else if(state.page == 'settings'){
+      body.className = 'settings';
+      h.innerHTML = "Settings";
+    }
+    else {
+      let list = document.querySelector('main').childNodes;
+      let i = 0;
+      let sEntry = document.querySelector('entry-page');
+      for (const entry of list){
+        i++; 
+        if(i == state.number){
+          sEntry.entry = entry.entry;
+        }
+      }
+      body.className = 'single-entry';
+      h.innerHTML = "Entry " + state.number; 
+    }
+    
+  }
+
 }
+
+
